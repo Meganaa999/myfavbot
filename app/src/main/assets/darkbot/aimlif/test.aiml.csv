@@ -1,0 +1,4 @@
+0,USER REGISTRATION,*,*,Enter patient details,test.aiml
+0,HELLO BOT,*,*,Hello user,test.aiml
+0,PATIENT NAME IS *,*,*, Ok patient is <set name = "username"> <star/>! </set>,test.aiml
+0,WHAT IS MY NAME,*,*,Your name is <get name = "username"/>,test.aiml

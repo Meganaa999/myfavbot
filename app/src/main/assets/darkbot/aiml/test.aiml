@@ -1,0 +1,35 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<aiml version="1.0.1" encoding = "UTF-8"?>
+   <category>
+      <pattern> USER REGISTRATION </pattern>
+
+      <template>
+        Enter patient details
+      </template>
+
+   </category>
+   <category>
+         <pattern> HELLO BOT </pattern>
+
+         <template>
+           Hello user
+         </template>
+
+      </category>
+   <category>
+         <pattern> PATIENT NAME IS * </pattern>
+
+         <template>
+           Ok patient is <set name = "username"> <star/>! </set>
+         </template>
+
+      </category>
+     <category>
+              <pattern> WHAT IS MY NAME </pattern>
+
+              <template>
+                Your name is <get name = "username"/>
+              </template>
+
+           </category>
+</aiml>
