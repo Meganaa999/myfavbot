@@ -1,4 +1,9 @@
-0,USER REGISTRATION,*,*,Enter patient details,test.aiml
-0,HELLO BOT,*,*,Hello user,test.aiml
-0,PATIENT NAME IS *,*,*, Ok patient is <set name = "username"> <star/>! </set>,test.aiml
-0,WHAT IS MY NAME,*,*,Your name is <get name = "username"/>,test.aiml
+0,HI,*,*,Hi! How can I help you,test.aiml
+0,I AM THE FAMILY MEMBER,*,*,Hi ! Nice to meet you. To enter user details type 'user registration',test.aiml
+0,WHO ARE YOU,*,*,I'm a Virtual Assistant Bot to help you. My name is Alzheimer's Bot,test.aiml
+0,WHO MADE YOU,*,*,I was made by Rupsa Meganaa Pranavi and Pratyush under the Guidance of Prof Chittaranjan Hota,test.aiml
+0,CAN YOU CALL MY FAMILY,*,*, Yes!, type 'call family1' to reach out to your primary contact. Type 'call family2' to reach out to your secondary contact.,test.aiml
+0,I AM NOT FEELING WELL,*,*,I'm sorry to hear that.Type 'call Doctor' and reach out to him immediately,test.aiml
+0,WHAT ARE MY MEDICINES,*,*,You need to take Donepezil and Galantamine once a day. To order them type 'open medplus',test.aiml0,USER REGISTRATION,*,*,Enter patient details,test.aiml
+0,USER REGISTRATION,*,*,Enter patient details in the form name 'name of patient' and address 'address of patient',test.aiml
+

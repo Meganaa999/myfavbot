@@ -39,6 +39,10 @@ import com.paul.mr_paul.blackbot.Contract.MessageContract;
 import com.paul.mr_paul.blackbot.DBHelper.MessageDBHelper;
 import com.paul.mr_paul.blackbot.DataTypes.MessageData;
 import com.paul.mr_paul.blackbot.UtilityPackage.Constants;
+import com.paul.mr_paul.blackbot.Contract.VariableContract;
+import com.paul.mr_paul.blackbot.DBHelper.VariableDBHelper;
+import com.paul.mr_paul.blackbot.DataTypes.VariableData;
+
 import com.bumptech.glide.Glide;
 
 import org.alicebot.ab.AIMLProcessor;
@@ -56,10 +60,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
+import java.util.*;
+
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -75,11 +78,16 @@ public class MainActivity extends AppCompatActivity {
     private TextToSpeech textToSpeech;
 
     private SQLiteDatabase database;
+    private SQLiteDatabase databasevar;
     private MessageAdapter messageAdapter;
 
     SharedPreferences preferences;
 
     private BottomSheetBehavior bottomSheetBehavior;
+    //StringBuilder name = new StringBuilder();
+    StringBuilder address = new StringBuilder();
+    //static String name;
+    //static String address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
 
         MessageDBHelper messageDBHelper = new MessageDBHelper(this);
         database = messageDBHelper.getWritableDatabase();
+
+        VariableDBHelper variableDBHelper = new VariableDBHelper(this);
+        databasevar = variableDBHelper.getWritableDatabase();
+
 
         timePerCharacter = 30 + (new Random().nextInt(30)); // 30 - 60
 
@@ -328,6 +340,32 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+    //delete variable data
+    private void deleteAllVariableData(){
+        // ask for user confirmation
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage("Are you sure, You want to delete all the patient details?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                databasevar.execSQL("DELETE FROM " + VariableContract.VariableEntry.TABLE_NAME);
+                //messageAdapter.swapCursor(getAllMessages());
+
+                Toast.makeText(MainActivity.this,
+                        "All previous details deleted!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Nopes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // do nothing
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
 
 
     private Cursor getAllMessages(){
@@ -339,6 +377,21 @@ public class MainActivity extends AppCompatActivity {
                 null,
                 null,
                 MessageContract.MessageEntry._ID + " DESC"
+        );
+    }
+    private Cursor getAnyVariable(String y){
+        //String dataname=VariableContract.VariableEntry.TABLE_NAME;
+        //Cursor res =  databasevar.rawQuery( "select * from variable_data where id=x" , null );
+        //return res;(x)
+        //String y=Integer.toString(x);
+        return databasevar.query(
+                VariableContract.VariableEntry.TABLE_NAME,
+                new String[]{"value"},
+                "variable=?",
+                new String[]{y},
+                null,
+                null,
+                null
         );
     }
 
@@ -371,7 +424,13 @@ public class MainActivity extends AppCompatActivity {
 
             String[] temp = message.split(" ", 2);
             displayBotReply(new MessageData(Constants.BOT, replyForCalling[new Random().nextInt(replyForCalling.length)] + " " + temp[1], timeStamp));
-            makeCall(temp[1]);
+            Cursor result=getAnyVariable("number");
+            result.moveToFirst();
+            String ans=result.getString(result.getColumnIndex("value"));
+
+
+
+            makeCall(ans);
         } else if(message.toUpperCase().startsWith("OPEN") || message.toUpperCase().startsWith("LAUNCH")){
             // call intent to app, requested by user
 
@@ -411,7 +470,149 @@ public class MainActivity extends AppCompatActivity {
 
             displayBotReply(new MessageData(Constants.BOT, replyForJokes[new Random().nextInt(replyForJokes.length)] + "\n" + mainFunction(message), timeStamp));
 
-        } else{
+        }
+        else if(message.toUpperCase().startsWith("NAME"))
+        {
+            // calling a phone number as requested by user
+
+            //String replyForEntering ="Noting Patient's details";
+            //String[] temp = message.split(" ", 2);
+            //displayBotReply(new MessageData(Constants.BOT, replyForEntering,timeStamp));
+            String[] replyForEntering = {
+                    "Storing name",
+                    "Saving name"
+            };
+
+            String[] temp = message.split(" ", 2);
+            displayBotReply(new MessageData(Constants.BOT, replyForEntering[new Random().nextInt(replyForEntering.length)] + " " + temp[1],timeStamp));
+            //if(temp[1].toUpperCase().equals("NAME")){
+                //address.append(temp[1]);
+            DateFormat dateFormatVar = new SimpleDateFormat("hh:mm dd/MM/yyyy");
+            String timeStampVar = dateFormatVar.format(new Date());
+
+            addVariable(new VariableData(Constants.NAME,temp[1], timeStampVar));
+            //}
+            //else if(temp[1].toUpperCase().equals("ADDRESS")){
+                //address.append(temp[3]);
+            //}
+        }
+        else if(message.toUpperCase().startsWith("ADDRESS"))
+        {
+            // calling a phone number as requested by user
+
+            //String replyForEntering ="Noting Patient's details";
+            //String[] temp = message.split(" ", 2);
+            //displayBotReply(new MessageData(Constants.BOT, replyForEntering,timeStamp));
+            String[] replyForEntering = {
+                    "Storing address",
+                    "Saving address"
+            };
+            //address victorial memorial
+            String[] temp = message.split(" ", 2);
+            displayBotReply(new MessageData(Constants.BOT, replyForEntering[new Random().nextInt(replyForEntering.length)] + " " + temp[1],timeStamp));
+            //if(temp[1].toUpperCase().equals("NAME")){
+            //address.append(temp[1]);
+            DateFormat dateFormatVar = new SimpleDateFormat("hh:mm dd/MM/yyyy");
+            String timeStampVar = dateFormatVar.format(new Date());
+
+            addVariable(new VariableData(Constants.ADDRESS,temp[1], timeStampVar));
+            //}
+            //else if(temp[1].toUpperCase().equals("ADDRESS")){
+            //address.append(temp[3]);
+            //}
+        }
+        else if(message.toUpperCase().startsWith("NUMBER"))
+        {
+            // calling a phone number as requested by user
+
+            //String replyForEntering ="Noting Patient's details";
+            //String[] temp = message.split(" ", 2);
+            //displayBotReply(new MessageData(Constants.BOT, replyForEntering,timeStamp));
+            String[] replyForEntering = {
+                    "Storing number",
+                    "Saving number"
+            };
+            //address victorial memorial
+            String[] temp = message.split(" ", 2);
+            displayBotReply(new MessageData(Constants.BOT, replyForEntering[new Random().nextInt(replyForEntering.length)] + " " + temp[1],timeStamp));
+            //if(temp[1].toUpperCase().equals("NAME")){
+            //address.append(temp[1]);
+            DateFormat dateFormatVar = new SimpleDateFormat("hh:mm dd/MM/yyyy");
+            String timeStampVar = dateFormatVar.format(new Date());
+
+            addVariable(new VariableData(Constants.NUMBER,temp[1], timeStampVar));
+            //}
+            //else if(temp[1].toUpperCase().equals("ADDRESS")){
+            //address.append(temp[3]);
+            //}
+        }
+        else if(message.toUpperCase().startsWith("RELATION"))
+        {
+            // calling a phone number as requested by user
+
+            //String replyForEntering ="Noting Patient's details";
+            //String[] temp = message.split(" ", 2);
+            //displayBotReply(new MessageData(Constants.BOT, replyForEntering,timeStamp));
+            String[] replyForEntering = {
+                    "Storing family relation",
+                    "Saving family relation"
+            };
+            //address victorial memorial
+            String[] temp = message.split(" ", 2);
+            displayBotReply(new MessageData(Constants.BOT, replyForEntering[new Random().nextInt(replyForEntering.length)] + " " + temp[1],timeStamp));
+            //if(temp[1].toUpperCase().equals("NAME")){
+            //address.append(temp[1]);
+            DateFormat dateFormatVar = new SimpleDateFormat("hh:mm dd/MM/yyyy");
+            String timeStampVar = dateFormatVar.format(new Date());
+
+            addVariable(new VariableData(Constants.RELATION,temp[1], timeStampVar));
+            //}
+            //else if(temp[1].toUpperCase().equals("ADDRESS")){
+            //address.append(temp[3]);
+            //}
+        }
+        else if(message.toUpperCase().equals("WHAT IS MY NAME")){
+            //String[] temp = message.split(" ");
+            //String reply=null;
+            //if(temp[3].toUpperCase().equals("NAME")){
+            Cursor result=getAnyVariable("name");
+            result.moveToFirst();
+            String ans=result.getString(result.getColumnIndex("value"));
+            String[] replyForWhat ={
+                    "my name is "+ans,
+                    "hello "+ans
+            };
+            //}
+            //else if(temp[3].toUpperCase().startsWith("ADDRESS")){
+                //reply = "my" + temp[3] + "is" + address;
+            //}
+
+            displayBotReply(new MessageData(Constants.BOT, replyForWhat[new Random().nextInt(replyForWhat.length)]+" ",timeStamp));
+
+        }
+        else if(message.toUpperCase().equals("WHERE DO I LIVE")){
+            //String[] temp = message.split(" ");
+            //String reply=null;
+            //if(temp[3].toUpperCase().equals("NAME")){
+            Cursor result=getAnyVariable("address");
+            result.moveToFirst();
+            String ans=result.getString(result.getColumnIndex("value"));
+            String[] replyForWhat ={
+                    "your home is at "+ans,
+                    "you live at "+ans
+            };
+            //}
+            //else if(temp[3].toUpperCase().startsWith("ADDRESS")){
+            //reply = "my" + temp[3] + "is" + address;
+            //}
+
+            displayBotReply(new MessageData(Constants.BOT, replyForWhat[new Random().nextInt(replyForWhat.length)]+" ",timeStamp));
+
+        }
+        else if(message.toUpperCase().equals("NEW USER")){
+            deleteAllVariableData();
+        }
+        else{
             // chat with bot - save the reply from the bot
             String botReply = mainFunction(message);
             if(botReply.trim().isEmpty()){
@@ -475,6 +676,19 @@ public class MainActivity extends AppCompatActivity {
 
         database.insert(MessageContract.MessageEntry.TABLE_NAME, null, contentValues);
         messageAdapter.swapCursor(getAllMessages());
+    }
+    private void addVariable(VariableData variableData){
+        String var = variableData.getVariable();
+        String value = variableData.getValue();
+        String timestamp = variableData.getTimeStamp();
+
+        ContentValues contentValuesVar = new ContentValues();
+        contentValuesVar.put(VariableContract.VariableEntry.COLUMN_VAR, var);
+        contentValuesVar.put(VariableContract.VariableEntry.COLUMN_VALUE, value);
+        contentValuesVar.put(VariableContract.VariableEntry.COLUMN_TIMESTAMP, timestamp);
+
+        databasevar.insert(VariableContract.VariableEntry.TABLE_NAME, null, contentValuesVar);
+        //messageAdapter.swapCursor(getAllMessages());
     }
 
     // UTILITY METHODS
@@ -570,7 +784,10 @@ public class MainActivity extends AppCompatActivity {
     protected void launchApp(String packageName) {
         if(packageName.equals("maps")){
             Log.i("darkbot","in the func maps");
-            String url = "http://maps.google.com/maps?daddr=hyderabad";
+            Cursor result=getAnyVariable("address");
+            result.moveToFirst();
+            String ans=result.getString(result.getColumnIndex("value"));
+            String url = "http://maps.google.com/maps?daddr="+ans;
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,  Uri.parse(url));
             startActivity(intent);
 

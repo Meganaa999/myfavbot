@@ -1,10 +1,66 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 <aiml version="1.0.1" encoding = "UTF-8"?>
+  <category>
+      <pattern>HI </pattern>
+
+      <template>
+        Hi! How can I help you.
+      </template>
+
+   </category>
+   <category>
+         <pattern>I AM THE FAMILY MEMBER </pattern>
+
+         <template>
+           Hi ! Nice to meet you. To enter user details type 'user registration'
+         </template>
+
+      </category>
+   <category>
+         <pattern>WHO ARE YOU</pattern>
+
+         <template>
+           I'm a Virtual Assistant Bot to help you. My name is Alzheimer's Bot
+         </template>
+
+      </category>
+     <category>
+              <pattern>WHO MADE YOU</pattern>
+
+              <template>
+                I was made by Rupsa Meganaa Pranavi and Pratyush under the Guidance of Prof Chittaranjan Hota
+              </template>
+
+           </category>
+      <category>
+                    <pattern>CAN YOU CALL MY FAMILY</pattern>
+
+                    <template>
+                     Yes!, type 'call family1' to reach out to your primary contact. Type 'call family2' to reach out to your secondary contact.
+                    </template>
+
+       </category>
+       <category>
+                           <pattern>I AM NOT FEELING WELL</pattern>
+
+                           <template>
+                            I'm sorry to hear that.Type 'call Doctor' and reach out to him immediately.
+                           </template>
+
+       </category>
+       <category>
+                          <pattern>WHAT ARE MY MEDICINES</pattern>
+
+                          <template>
+                            You need to take Donepezil and Galantamine once a day. To order them type 'open medplus'
+                          </template>
+
+       </category>
    <category>
       <pattern> USER REGISTRATION </pattern>
 
       <template>
-        Enter patient details
+        Enter patient details in the form name 'name of patient'and address 'address of patient'
       </template>
 
    </category>
